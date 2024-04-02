@@ -1,0 +1,27 @@
+from scapy.all import *
+import logging
+
+# Setup logging with timestamp
+logging.basicConfig(filename='packet_sniffer.log', level=logging.INFO, format='%(asctime)s %(message)s')
+logging.info("Packet Sniffer Started")
+
+def packet_sniffer(packet):
+    # Extract common packet information
+    src_ip = packet[IP].src if packet.haslayer(IP) else 'N/A'
+    dst_ip = packet[IP].dst if packet.haslayer(IP) else 'N/A'
+    packet_info = f"Src IP: {src_ip}, Dst IP: {dst_ip}"
+
+    # Handle different packet types
+    if packet.haslayer(ARP):
+        logging.info(f"ARP Packet: {packet_info}")
+    elif packet.haslayer(ICMP):
+        logging.info(f"ICMP Packet: {packet_info}")
+    elif packet.haslayer(BOOTP):
+        logging.info(f"BOOTP Packet: {packet_info}")
+    # Add more conditions as needed
+
+    # Log the full packet detail optionally
+    # logging.debug(f"Captured Packet: {packet}")
+
+# Start sniffing (remove count or set to None for continuous sniffing)
+sniff(prn=packet_sniffer, count=None)
